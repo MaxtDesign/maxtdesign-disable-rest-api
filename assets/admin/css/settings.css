@@ -1,0 +1,237 @@
+/**
+ * MaxtDesign Disable REST API — Admin Settings Styles
+ *
+ * Loaded ONLY on the plugin's settings page. Never globally.
+ *
+ * @package MaxtDesign\DisableRestApi
+ * @since   1.0.0
+ */
+
+/* === Layout === */
+
+.mdra-settings-wrap {
+	max-width: 900px;
+}
+
+.mdra-section {
+	margin-top: 20px;
+	padding: 0 0 10px;
+}
+
+.mdra-section h2 {
+	margin: 0 0 10px;
+	padding: 10px 0;
+	border-bottom: 1px solid #ccd0d4;
+}
+
+/* === Collapsible Sections === */
+
+.mdra-toggle-section {
+	background: none;
+	border: none;
+	color: #1d2327;
+	cursor: pointer;
+	font-size: inherit;
+	font-weight: inherit;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	text-align: left;
+}
+
+.mdra-toggle-section:hover,
+.mdra-toggle-section:focus {
+	color: #2271b1;
+}
+
+.mdra-toggle-icon::before {
+	content: "\25B6";
+	display: inline-block;
+	font-size: 10px;
+	transition: transform 0.2s ease;
+}
+
+[aria-expanded="true"] > .mdra-toggle-icon::before {
+	transform: rotate(90deg);
+}
+
+/* === Endpoint Tree === */
+
+.mdra-endpoint-tree {
+	margin: 15px 0;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	background: #fff;
+	max-height: 500px;
+	overflow-y: auto;
+}
+
+.mdra-namespace-group {
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.mdra-namespace-group:last-child {
+	border-bottom: none;
+}
+
+.mdra-namespace-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	background: #f6f7f7;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.mdra-namespace-header:hover {
+	background: #f0f0f1;
+}
+
+.mdra-toggle-namespace {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 2px 4px;
+	color: #50575e;
+	line-height: 1;
+}
+
+.mdra-toggle-namespace:hover,
+.mdra-toggle-namespace:focus {
+	color: #2271b1;
+}
+
+.mdra-namespace-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex: 1;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.mdra-namespace-label code {
+	background: none;
+	font-size: 13px;
+}
+
+.mdra-route-count {
+	color: #787c82;
+	font-weight: 400;
+	font-size: 12px;
+}
+
+.mdra-namespace-actions {
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.mdra-namespace-actions .button-link {
+	font-size: 12px;
+	text-decoration: none;
+}
+
+.mdra-namespace-actions .button-link:hover {
+	text-decoration: underline;
+}
+
+.mdra-namespace-routes {
+	padding: 6px 12px 6px 40px;
+}
+
+.mdra-route-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 0;
+	cursor: pointer;
+}
+
+.mdra-route-label code {
+	font-size: 12px;
+	color: #50575e;
+	background: none;
+}
+
+.mdra-route-label:hover code {
+	color: #1d2327;
+}
+
+/* === Role Controls === */
+
+.mdra-role-block {
+	margin: 10px 0;
+	padding: 12px 15px;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.mdra-role-block h3 {
+	margin: 0;
+	font-size: 14px;
+}
+
+.mdra-role-block h3 label {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.mdra-role-endpoints {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.mdra-role-endpoints .mdra-endpoint-tree {
+	max-height: 300px;
+}
+
+/* === Import / Export === */
+
+.mdra-import-export {
+	margin-top: 30px;
+}
+
+.mdra-import-export-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	margin: 15px 0;
+}
+
+@media (max-width: 782px) {
+	.mdra-import-export-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.mdra-export-box,
+.mdra-import-box {
+	padding: 15px;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.mdra-export-box h3,
+.mdra-import-box h3 {
+	margin-top: 0;
+}
+
+.mdra-import-box input[type="file"] {
+	margin-bottom: 10px;
+}
+
+.mdra-reset-box {
+	margin-top: 15px;
+}
+
+.mdra-reset-box .button-link-delete,
+.mdra-reset-box .button.delete {
+	color: #b32d2e;
+}
