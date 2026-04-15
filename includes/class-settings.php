@@ -92,16 +92,18 @@ final class Settings {
 			return;
 		}
 
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		wp_enqueue_style(
 			'mdra-settings',
-			MDRA_PLUGIN_URL . 'assets/admin/css/settings.css',
+			MDRA_PLUGIN_URL . 'assets/admin/css/settings' . $suffix . '.css',
 			[],
 			MDRA_VERSION
 		);
 
 		wp_enqueue_script(
 			'mdra-settings',
-			MDRA_PLUGIN_URL . 'assets/admin/js/settings.js',
+			MDRA_PLUGIN_URL . 'assets/admin/js/settings' . $suffix . '.js',
 			[],
 			MDRA_VERSION,
 			true
@@ -192,7 +194,16 @@ final class Settings {
 			exit;
 		}
 
-		$file_content = file_get_contents( sanitize_text_field( $_FILES['mdra_import_file']['tmp_name'] ) );
+		global $wp_filesystem;
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		WP_Filesystem();
+
+		$tmp_file     = sanitize_text_field( $_FILES['mdra_import_file']['tmp_name'] );
+		$file_content = $wp_filesystem->get_contents( $tmp_file );
 
 		if ( false === $file_content ) {
 			wp_safe_redirect( add_query_arg( 'mdra_message', 'import_error', $this->get_settings_url() ) );
