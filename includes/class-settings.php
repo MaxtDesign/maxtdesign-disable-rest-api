@@ -116,6 +116,10 @@ final class Settings {
 	 * @since 1.0.0
 	 */
 	public function handle_form_submission(): void {
+		// Nonce is verified inside each dispatched handler (save/import/export/
+		// reset) because each form ships its own nonce. We need the action
+		// name first to know which nonce to check.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! isset( $_POST['mdra_action'] ) ) {
 			return;
 		}
@@ -124,6 +128,7 @@ final class Settings {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$action = sanitize_text_field( wp_unslash( $_POST['mdra_action'] ) );
 
 		switch ( $action ) {
@@ -161,11 +166,15 @@ final class Settings {
 				? sanitize_text_field( wp_unslash( $_POST['mdra_error_message'] ) )
 				: __( 'REST API access restricted.', 'maxtdesign-disable-rest-api' ),
 			'allow_logged_in'       => ! empty( $_POST['mdra_allow_logged_in'] ),
+			// Sanitization happens element-wise inside sanitize_endpoint_list()
+			// and sanitize_role_restrictions() — PHPCS can't see through that.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			'whitelisted_endpoints' => $this->sanitize_endpoint_list(
 				isset( $_POST['mdra_whitelisted_endpoints'] ) && is_array( $_POST['mdra_whitelisted_endpoints'] )
 					? wp_unslash( $_POST['mdra_whitelisted_endpoints'] )
 					: []
 			),
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			'role_restrictions'     => $this->sanitize_role_restrictions(
 				isset( $_POST['mdra_role_restrictions'] ) && is_array( $_POST['mdra_role_restrictions'] )
 					? wp_unslash( $_POST['mdra_role_restrictions'] )
@@ -197,6 +206,7 @@ final class Settings {
 		// tmp_name is a server-generated path, not user input. Use it as-is
 		// after validating it via is_uploaded_file() (defense-in-depth against
 		// $_FILES tampering).
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$tmp_file = $_FILES['mdra_import_file']['tmp_name'];
 
 		if ( ! is_string( $tmp_file ) || ! is_uploaded_file( $tmp_file ) ) {
@@ -293,10 +303,15 @@ final class Settings {
 			return;
 		}
 
+		// Read-only notice lookup whose value is whitelisted against a fixed
+		// set below — no state-changing action depends on this $_GET, so a
+		// nonce isn't needed.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['mdra_message'] ) ) {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$message = sanitize_text_field( wp_unslash( $_GET['mdra_message'] ) );
 		$notices = [
 			'saved'        => [ 'success', __( 'Settings saved successfully.', 'maxtdesign-disable-rest-api' ) ],

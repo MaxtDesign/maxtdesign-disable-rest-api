@@ -19,10 +19,10 @@ delete_option( 'mdra_settings' );
 
 // For multisite: remove option from all sites.
 if ( is_multisite() ) {
-	$sites = get_sites( [ 'fields' => 'ids', 'number' => 0 ] );
+	$mdra_sites = get_sites( [ 'fields' => 'ids', 'number' => 0 ] );
 
-	foreach ( $sites as $site_id ) {
-		switch_to_blog( (int) $site_id );
+	foreach ( $mdra_sites as $mdra_site_id ) {
+		switch_to_blog( (int) $mdra_site_id );
 		delete_option( 'mdra_settings' );
 		restore_current_blog();
 	}
