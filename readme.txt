@@ -94,6 +94,7 @@ Use the Export Settings button to download a JSON file, then use Import Settings
 * Compatibility: confirmed against WordPress 7.0 ("Armstrong").
 * Hardening: import-settings now validates uploads with `is_uploaded_file()` and reads the temp file directly instead of mis-sanitising the server-generated path.
 * Hardening: activation hook defensively loads `wp-admin/includes/plugin.php` before calling `is_plugin_active()` so WP-CLI and multisite bulk-activate paths can't fatal.
+* Fix: the "this plugin requires REST API access" compatibility notice no longer fires for plugins whose namespaces aren't actually registered on the site (e.g. WooCommerce installed but Store API blocks not loaded).
 * Cleanup: removed the now-unnecessary `load_plugin_textdomain()` call. WordPress.org handles translation loading automatically since WP 4.6, and the just-in-time loader added in 6.7 made the explicit call dead code.
 
 = 1.0.0 =

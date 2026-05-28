@@ -347,10 +347,27 @@ final class Settings {
 			return;
 		}
 
-		$known_plugins = $this->get_known_rest_plugins();
+		$discovered     = $this->discover_endpoints();
+		$discovered_set = array_keys( $discovered );
+		$known_plugins  = $this->get_known_rest_plugins();
 
 		foreach ( $known_plugins as $plugin ) {
 			if ( ! $plugin['active'] ) {
+				continue;
+			}
+
+			// Only warn if at least one of this plugin's namespaces is actually
+			// registered on the site. Otherwise there's nothing to whitelist
+			// (e.g. WooCommerce installed but Store API blocks not loaded).
+			$has_registered_namespace = false;
+			foreach ( $plugin['namespaces'] as $ns ) {
+				if ( in_array( $ns, $discovered_set, true ) ) {
+					$has_registered_namespace = true;
+					break;
+				}
+			}
+
+			if ( ! $has_registered_namespace ) {
 				continue;
 			}
 
