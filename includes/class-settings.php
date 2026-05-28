@@ -160,26 +160,25 @@ final class Settings {
 			return;
 		}
 
+		// Raw arrays — sanitized element-wise by the dedicated helpers below.
+		// PHPCS can't trace through the helpers, so suppress on the actual
+		// $_POST read lines.
+		$raw_whitelisted = isset( $_POST['mdra_whitelisted_endpoints'] ) && is_array( $_POST['mdra_whitelisted_endpoints'] )
+			? wp_unslash( $_POST['mdra_whitelisted_endpoints'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			: [];
+
+		$raw_role_restrictions = isset( $_POST['mdra_role_restrictions'] ) && is_array( $_POST['mdra_role_restrictions'] )
+			? wp_unslash( $_POST['mdra_role_restrictions'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			: [];
+
 		$settings = [
 			'disable_rest_api'      => ! empty( $_POST['mdra_disable_rest_api'] ),
 			'error_message'         => isset( $_POST['mdra_error_message'] )
 				? sanitize_text_field( wp_unslash( $_POST['mdra_error_message'] ) )
 				: __( 'REST API access restricted.', 'maxtdesign-disable-rest-api' ),
 			'allow_logged_in'       => ! empty( $_POST['mdra_allow_logged_in'] ),
-			// Sanitization happens element-wise inside sanitize_endpoint_list()
-			// and sanitize_role_restrictions() — PHPCS can't see through that.
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			'whitelisted_endpoints' => $this->sanitize_endpoint_list(
-				isset( $_POST['mdra_whitelisted_endpoints'] ) && is_array( $_POST['mdra_whitelisted_endpoints'] )
-					? wp_unslash( $_POST['mdra_whitelisted_endpoints'] )
-					: []
-			),
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			'role_restrictions'     => $this->sanitize_role_restrictions(
-				isset( $_POST['mdra_role_restrictions'] ) && is_array( $_POST['mdra_role_restrictions'] )
-					? wp_unslash( $_POST['mdra_role_restrictions'] )
-					: []
-			),
+			'whitelisted_endpoints' => $this->sanitize_endpoint_list( $raw_whitelisted ),
+			'role_restrictions'     => $this->sanitize_role_restrictions( $raw_role_restrictions ),
 		];
 
 		update_option( 'mdra_settings', $settings, true );
