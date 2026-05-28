@@ -25,9 +25,9 @@ Every release requires these to match exactly:
 
 | Location | File | Line/Pattern |
 |---|---|---|
-| Plugin header | `maxtdesign-disable-rest-api.php` | line 6: `Version: 1.0.0` |
-| Readme stable tag | `readme.txt` | line 7: `Stable tag: 1.0.0` |
-| Constant (if used) | `maxtdesign-disable-rest-api.php` | line 28: `define( 'MDRA_VERSION', '1.0.0' );` |
+| Plugin header | `maxtdesign-disable-rest-api.php` | line 6: `Version: 1.0.1` |
+| Readme stable tag | `readme.txt` | line 7: `Stable tag: 1.0.1` |
+| Constant (if used) | `maxtdesign-disable-rest-api.php` | line 28: `define( 'MDRA_VERSION', '1.0.1' );` |
 | Git tag | repo | `vX.Y.Z` on main |
 | SVN tag | `/tags/X.Y.Z/` | created by procedure |
 
@@ -61,7 +61,7 @@ Baseline comes from `hq/.claude/standards/wporg-svn-setup.md`. Additional per-pl
 
 | Version | Date | Git SHA | Notes |
 |---|---|---|---|
-| _(add on each release)_ | | | |
+| 1.0.1 | 2026-05-28 | (set by release) | Audit + WP 7.0 compat + hardening. GitHub release only — wp.org SVN slug pending approval, hold SVN push until approved. |
 
 ## Plugin-Specific Notes / Gotchas
 
