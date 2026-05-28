@@ -90,12 +90,14 @@ final class Rest_Controller {
 			return $result;
 		}
 
+		// An empty route here means the REST root index (/wp-json/) or an
+		// equivalent root-level request. The rest_authentication_errors
+		// filter only fires from inside the REST server, so we know we're
+		// handling a REST request even when the route lookup comes back
+		// empty — don't fail open. Empty routes flow through the whitelist
+		// matcher like any other route; the root index is blocked by default
+		// because no whitelist entry can match it.
 		$current_route = $this->get_current_route();
-
-		// If we can't determine the route, allow the request.
-		if ( '' === $current_route ) {
-			return $result;
-		}
 
 		$is_logged_in = is_user_logged_in();
 

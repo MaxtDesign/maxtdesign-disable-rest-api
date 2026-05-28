@@ -4,7 +4,7 @@ Tags: rest api, security, disable rest api, json api, api control
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Use the Export Settings button to download a JSON file, then use Import Settings
 
 == Changelog ==
 
+= 1.0.2 =
+* Fix: the REST API root index (`/wp-json/`) is now blocked when "Disable REST API for unauthenticated users" is on. Previously, the controller's route-lookup returned an empty string for the root index and the code took an early fail-open branch — meaning the most-scraped discovery URL was always exposed even when the plugin was active. Logged-out visitors and unauthenticated scrapers now hit the configured error response on `/wp-json/` like any other endpoint.
+
 = 1.0.1 =
 * Compatibility: confirmed against WordPress 7.0 ("Armstrong").
 * Hardening: import-settings now validates uploads with `is_uploaded_file()` and reads the temp file directly instead of mis-sanitising the server-generated path.
@@ -109,6 +112,9 @@ Use the Export Settings button to download a JSON file, then use Import Settings
 * Clean uninstall — removes all plugin data.
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+Security fix. Closes a fail-open on the REST API root (`/wp-json/`) that left the discovery endpoint exposed even when the plugin was active. Update immediately.
 
 = 1.0.1 =
 WordPress 7.0 compatibility confirmed. Hardens settings import and the activation path. Recommended for all users.
