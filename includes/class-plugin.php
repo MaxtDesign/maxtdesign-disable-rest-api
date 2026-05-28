@@ -93,7 +93,6 @@ final class Plugin {
 		register_activation_hook( MDRA_PLUGIN_FILE, [ $this, 'activate' ] );
 		register_deactivation_hook( MDRA_PLUGIN_FILE, [ $this, 'deactivate' ] );
 
-		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_filter( 'plugin_action_links_' . MDRA_PLUGIN_BASENAME, [ $this, 'add_settings_link' ] );
 	}
 
@@ -107,6 +106,13 @@ final class Plugin {
 	public function activate(): void {
 		if ( false !== get_option( 'mdra_settings' ) ) {
 			return;
+		}
+
+		// is_plugin_active() lives in wp-admin/includes/plugin.php and isn't
+		// guaranteed loaded during programmatic activation (WP-CLI, multisite
+		// bulk activate). Include it before use.
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$defaults = mdra_get_default_settings();
@@ -138,19 +144,6 @@ final class Plugin {
 	public function deactivate(): void {
 		// Intentionally left empty. Settings are preserved on deactivation.
 		// Full cleanup happens only via uninstall.php.
-	}
-
-	/**
-	 * Loads the plugin text domain for translations.
-	 *
-	 * @since 1.0.0
-	 */
-	public function load_textdomain(): void {
-		load_plugin_textdomain(
-			'maxtdesign-disable-rest-api',
-			false,
-			dirname( MDRA_PLUGIN_BASENAME ) . '/languages'
-		);
 	}
 
 	/**

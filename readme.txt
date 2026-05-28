@@ -2,9 +2,9 @@
 Contributors: maxtdesign
 Tags: rest api, security, disable rest api, json api, api control
 Requires at least: 6.4
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,12 @@ Use the Export Settings button to download a JSON file, then use Import Settings
 
 == Changelog ==
 
+= 1.0.1 =
+* Compatibility: confirmed against WordPress 7.0 ("Armstrong").
+* Hardening: import-settings now validates uploads with `is_uploaded_file()` and reads the temp file directly instead of mis-sanitising the server-generated path.
+* Hardening: activation hook defensively loads `wp-admin/includes/plugin.php` before calling `is_plugin_active()` so WP-CLI and multisite bulk-activate paths can't fatal.
+* Cleanup: removed the now-unnecessary `load_plugin_textdomain()` call. WordPress.org handles translation loading automatically since WP 4.6, and the just-in-time loader added in 6.7 made the explicit call dead code.
+
 = 1.0.0 =
 * Initial release.
 * Global REST API toggle for unauthenticated users.
@@ -102,6 +108,9 @@ Use the Export Settings button to download a JSON file, then use Import Settings
 * Clean uninstall — removes all plugin data.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+WordPress 7.0 compatibility confirmed. Hardens settings import and the activation path. Recommended for all users.
 
 = 1.0.0 =
 Initial release. Take full control of your WordPress REST API.

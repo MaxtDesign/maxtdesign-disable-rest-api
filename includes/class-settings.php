@@ -194,7 +194,15 @@ final class Settings {
 			exit;
 		}
 
-		global $wp_filesystem;
+		// tmp_name is a server-generated path, not user input. Use it as-is
+		// after validating it via is_uploaded_file() (defense-in-depth against
+		// $_FILES tampering).
+		$tmp_file = $_FILES['mdra_import_file']['tmp_name'];
+
+		if ( ! is_string( $tmp_file ) || ! is_uploaded_file( $tmp_file ) ) {
+			wp_safe_redirect( add_query_arg( 'mdra_message', 'import_error', $this->get_settings_url() ) );
+			exit;
+		}
 
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -202,7 +210,8 @@ final class Settings {
 
 		WP_Filesystem();
 
-		$tmp_file     = sanitize_text_field( $_FILES['mdra_import_file']['tmp_name'] );
+		global $wp_filesystem;
+
 		$file_content = $wp_filesystem->get_contents( $tmp_file );
 
 		if ( false === $file_content ) {
