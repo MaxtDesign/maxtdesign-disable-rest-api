@@ -125,70 +125,91 @@ final class Rest_Controller {
 		string $route,
 		array $settings
 	): \WP_Error|true|null {
-		// If all logged-in users are allowed, pass through.
-		if ( ! empty( $settings['allow_logged_in'] ) ) {
-			// Check per-role restrictions.
-			$user  = wp_get_current_user();
-			$roles = $user->roles;
+		$roles             = wp_get_current_user()->roles;
+		$role_restrictions = $settings['role_restrictions'] ?? [];
 
+		if ( ! empty( $settings['allow_logged_in'] ) ) {
+			// All logged-in users are allowed by default. A user with no roles,
+			// or with at least one role that is NOT restricted, gets full
+			// access — the most permissive role always wins.
 			if ( empty( $roles ) ) {
 				return $result;
 			}
 
-			// Check if any of the user's roles have restrictions.
-			$role_restrictions = $settings['role_restrictions'] ?? [];
+			$restricted_roles = [];
 
 			foreach ( $roles as $role ) {
-				if ( ! isset( $role_restrictions[ $role ] ) ) {
-					continue;
-				}
-
-				$role_config = $role_restrictions[ $role ];
-
-				if ( empty( $role_config['restricted'] ) ) {
-					continue;
-				}
-
-				// This role is restricted. Check its whitelist.
-				$role_whitelist = $role_config['whitelisted_endpoints'] ?? [];
-
-				if ( $this->is_route_whitelisted( $route, $role_whitelist ) ) {
+				if ( empty( $role_restrictions[ $role ]['restricted'] ) ) {
+					// This role is unrestricted; the user keeps full access.
 					return $result;
 				}
 
-				return $this->get_error_response( $settings );
+				$restricted_roles[] = $role;
 			}
 
+			// Every role the user holds is restricted. Combine the whitelists
+			// of all of them and allow the route if any of them permits it.
+			$union = $this->collect_role_whitelists( $restricted_roles, $role_restrictions );
+
+			if ( $this->is_route_whitelisted( $route, $union ) ) {
+				return $result;
+			}
+
+			return $this->get_error_response( $settings );
+		}
+
+		// allow_logged_in is off: logged-in users are not auto-granted access.
+		// Still honour the most-permissive rule — an explicitly unrestricted
+		// role grants full access.
+		foreach ( $roles as $role ) {
+			if ( isset( $role_restrictions[ $role ] ) && empty( $role_restrictions[ $role ]['restricted'] ) ) {
+				return $result;
+			}
+		}
+
+		// Otherwise the user may reach the global whitelist plus the combined
+		// whitelists of any restricted roles they hold.
+		$restricted_roles = [];
+
+		foreach ( $roles as $role ) {
+			if ( ! empty( $role_restrictions[ $role ]['restricted'] ) ) {
+				$restricted_roles[] = $role;
+			}
+		}
+
+		$union = array_merge(
+			$settings['whitelisted_endpoints'] ?? [],
+			$this->collect_role_whitelists( $restricted_roles, $role_restrictions )
+		);
+
+		if ( $this->is_route_whitelisted( $route, $union ) ) {
 			return $result;
 		}
 
-		// If allow_logged_in is off, treat like unauthenticated but check role restrictions.
-		$user  = wp_get_current_user();
-		$roles = $user->roles;
+		return $this->get_error_response( $settings );
+	}
 
-		$role_restrictions = $settings['role_restrictions'] ?? [];
+	/**
+	 * Collects and de-duplicates the whitelisted endpoints across a set of roles.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @param array<string>        $roles             Role slugs to collect from.
+	 * @param array<string, mixed> $role_restrictions The role_restrictions settings map.
+	 * @return array<string> Combined, de-duplicated whitelist.
+	 */
+	private function collect_role_whitelists( array $roles, array $role_restrictions ): array {
+		$union = [];
 
 		foreach ( $roles as $role ) {
-			if ( isset( $role_restrictions[ $role ] ) ) {
-				$role_config = $role_restrictions[ $role ];
+			$whitelist = $role_restrictions[ $role ]['whitelisted_endpoints'] ?? [];
 
-				if ( empty( $role_config['restricted'] ) ) {
-					// This role is explicitly unrestricted.
-					return $result;
-				}
-
-				$role_whitelist = $role_config['whitelisted_endpoints'] ?? [];
-
-				if ( $this->is_route_whitelisted( $route, $role_whitelist ) ) {
-					return $result;
-				}
-
-				return $this->get_error_response( $settings );
+			if ( is_array( $whitelist ) ) {
+				$union = array_merge( $union, $whitelist );
 			}
 		}
 
-		// No specific role config and allow_logged_in is off — block.
-		return $this->handle_unauthenticated_request( $route, $settings );
+		return array_values( array_unique( $union ) );
 	}
 
 	/**
@@ -226,19 +247,28 @@ final class Rest_Controller {
 		$route = ltrim( $route, '/' );
 
 		foreach ( $whitelisted as $allowed ) {
-			$allowed = ltrim( $allowed, '/' );
+			$allowed = ltrim( (string) $allowed, '/' );
 
 			if ( '' === $allowed ) {
 				continue;
 			}
 
-			// Exact match.
+			// Exact match (covers namespaces and static routes).
 			if ( $route === $allowed ) {
 				return true;
 			}
 
-			// Namespace/prefix match: if route starts with the allowed pattern.
+			// Namespace / static-prefix match: route lives under the allowed path.
 			if ( str_starts_with( $route, $allowed . '/' ) ) {
+				return true;
+			}
+
+			// Pattern-route match. Discovered route keys carry their regex
+			// syntax verbatim (e.g. "wp/v2/posts/(?P<id>[\d]+)"). When a
+			// whitelist entry contains regex metacharacters, match it against
+			// the concrete requested route the same way WP_REST_Server does,
+			// instead of comparing the literal pattern string.
+			if ( $this->is_pattern_route( $allowed ) && $this->matches_route_pattern( $allowed, $route ) ) {
 				return true;
 			}
 		}
@@ -253,6 +283,41 @@ final class Rest_Controller {
 		 * @param array  $whitelisted    The whitelist from settings.
 		 */
 		return (bool) apply_filters( 'mdra_is_route_whitelisted', false, $route, $whitelisted );
+	}
+
+	/**
+	 * Determines whether a whitelist entry is a regex route pattern rather
+	 * than a plain namespace or static route.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @param string $candidate The whitelist entry to inspect.
+	 * @return bool True if the entry contains regex metacharacters.
+	 */
+	private function is_pattern_route( string $candidate ): bool {
+		return 1 === preg_match( '/[()\[\]?+*|]/', $candidate );
+	}
+
+	/**
+	 * Matches a registered route pattern against a concrete requested route.
+	 *
+	 * Mirrors WP_REST_Server::dispatch(), which anchors the registered route
+	 * regex with ^...$ and matches case-insensitively.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @param string $pattern The registered route pattern (regex body).
+	 * @param string $route   The concrete requested route.
+	 * @return bool True if the route matches the pattern.
+	 */
+	private function matches_route_pattern( string $pattern, string $route ): bool {
+		// Use '@' delimiters so unescaped slashes in routes don't break the
+		// expression; escape any literal '@' in the pattern just in case.
+		$regex = '@^' . str_replace( '@', '\@', $pattern ) . '$@i';
+
+		// A malformed pattern must never fatal the request — suppress the
+		// warning and treat an error as "no match".
+		return 1 === @preg_match( $regex, $route );
 	}
 
 	/**
@@ -301,7 +366,12 @@ final class Rest_Controller {
 	 * @return \WP_Error The error response.
 	 */
 	private function get_error_response( array $settings ): \WP_Error {
-		$message = $settings['error_message'] ?? __( 'REST API access restricted.', 'maxtdesign-disable-rest-api' );
+		// An empty stored message resolves to the translated default at render
+		// time, so the response always speaks the current site's locale rather
+		// than whichever locale was active when the setting was saved.
+		$message = ! empty( $settings['error_message'] )
+			? $settings['error_message']
+			: __( 'REST API access restricted.', 'maxtdesign-disable-rest-api' );
 
 		/**
 		 * Filters the error response returned when a REST API request is blocked.

@@ -3,7 +3,7 @@
  * Plugin Name:       MaxtDesign Disable REST API
  * Plugin URI:        https://maxtdesign.com/plugins/disable-rest-api
  * Description:       Full control over your WordPress REST API. Block, restrict, or whitelist endpoints per user role. Lightweight, fast, zero frontend footprint.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires at least: 6.4
  * Requires PHP:      8.2
  * Author:            MaxtDesign
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants.
-define( 'MDRA_VERSION', '1.0.2' );
+define( 'MDRA_VERSION', '1.0.3' );
 define( 'MDRA_PLUGIN_FILE', __FILE__ );
 define( 'MDRA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MDRA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

@@ -1,10 +1,10 @@
 === MaxtDesign Disable REST API ===
-Contributors: maxtdesign
+Contributors: slaacr
 Tags: rest api, security, disable rest api, json api, api control
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,11 +67,15 @@ Your REST API returns to normal WordPress behavior — fully open. Your settings
 
 = Does this affect the WordPress block editor (Gutenberg)? =
 
-No. The block editor uses the REST API as a logged-in user, which has full access by default. Your editing experience is completely unaffected.
+No. By default the plugin only restricts **unauthenticated** requests, and every logged-in user keeps full REST API access — so the block editor, which talks to the REST API as the logged-in author, is completely unaffected. The "Allow REST API for all logged-in users" toggle is on out of the box specifically to keep the editor, dashboard, and admin AJAX working. You would only see editor issues if you deliberately turn that toggle off **and** restrict your own role without whitelisting `wp/v2` — which the per-role UI makes explicit.
 
 = Can I restrict specific user roles? =
 
 Yes. The Per-Role Controls section lets you restrict REST API access for individual roles (subscriber, contributor, author, editor, etc.) and configure a custom endpoint whitelist for each restricted role.
+
+= What happens if a user has more than one role? =
+
+The most permissive role wins. If a user holds any role that is **not** restricted, they keep full REST API access. If every one of their roles is restricted, the plugin combines the whitelists of all those roles and allows a request that any of them permits. This prevents a single restricted role (for example a stray `subscriber` capability) from unexpectedly locking out a user who also has an unrestricted role.
 
 = Does this work with custom REST API endpoints? =
 
@@ -88,7 +92,20 @@ Use the Export Settings button to download a JSON file, then use Import Settings
 3. Per-role controls — restrict REST API access for individual user roles.
 4. Import/Export — easily transfer settings between sites.
 
+== Privacy ==
+
+This plugin makes no external HTTP requests, sets no cookies, loads no third-party scripts, and collects no analytics. It does not track usage and never "calls home." It stores a single settings option (`mdra_settings`) in your database and nothing else; that option is removed when you delete the plugin. No personal or visitor data is processed or transmitted.
+
 == Changelog ==
+
+= 1.0.3 =
+* Fix: route-level whitelisting now works for parameterized endpoints. Checking an individual route such as `wp/v2/posts/(?P<id>[\d]+)` previously stored a corrupted value (the sanitiser mangled the regex) and could never match a real request. Route patterns are now stored intact and matched the way WordPress itself matches them. Namespace-level whitelisting was unaffected.
+* Improve: multi-role users now get the most permissive result. Any unrestricted role grants full access; if every role is restricted, their whitelists are combined. Previously the first restricted role found could lock out a user who also held an unrestricted role.
+* Fix: the "requires REST API access" compatibility warnings now appear on every visit to the settings page, not only immediately after saving.
+* Improve: smart defaults are now seeded per-site on multisite — both on network-wide activation and for sites created later.
+* Improve: the custom error message now stores empty as "use the default," so the blocked-request message always follows the site's current language instead of freezing whichever locale was active when it was saved.
+* Performance: the settings page no longer instantiates its admin UI on front-end or REST requests, and discovers the REST route table only once per page load.
+* Housekeeping: removed an unused internal placeholder class and tidied redundant nonce-check branches.
 
 = 1.0.2 =
 * Fix: the REST API root index (`/wp-json/`) is now blocked when "Disable REST API for unauthenticated users" is on. Previously, the controller's route-lookup returned an empty string for the root index and the code took an early fail-open branch — meaning the most-scraped discovery URL was always exposed even when the plugin was active. Logged-out visitors and unauthenticated scrapers now hit the configured error response on `/wp-json/` like any other endpoint.
@@ -112,6 +129,9 @@ Use the Export Settings button to download a JSON file, then use Import Settings
 * Clean uninstall — removes all plugin data.
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+Fixes route-level whitelisting for parameterized endpoints (namespace whitelisting was already fine) and makes multi-role access most-permissive. Recommended for anyone using per-route or per-role rules.
 
 = 1.0.2 =
 Security fix. Closes a fail-open on the REST API root (`/wp-json/`) that left the discovery endpoint exposed even when the plugin was active. Update immediately.

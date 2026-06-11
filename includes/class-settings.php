@@ -42,6 +42,14 @@ final class Settings {
 	private Role_Manager $role_manager;
 
 	/**
+	 * Memoized discovered endpoints for the current request.
+	 *
+	 * @since 1.0.3
+	 * @var array<string, array<string>>|null
+	 */
+	private ?array $discovered = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
@@ -156,9 +164,9 @@ final class Settings {
 	 * @since 1.0.0
 	 */
 	private function save_settings(): void {
-		if ( ! check_admin_referer( 'mdra_save_settings', 'mdra_nonce' ) ) {
-			return;
-		}
+		// check_admin_referer() halts the request on a bad/expired nonce, so
+		// execution past this line is always verified.
+		check_admin_referer( 'mdra_save_settings', 'mdra_nonce' );
 
 		// Raw arrays — sanitized element-wise by the dedicated helpers below.
 		// PHPCS can't trace through the helpers, so suppress on the actual
@@ -173,9 +181,12 @@ final class Settings {
 
 		$settings = [
 			'disable_rest_api'      => ! empty( $_POST['mdra_disable_rest_api'] ),
+			// Store the message verbatim (empty allowed). An empty value means
+			// "use the translated default", resolved at render time so the
+			// stored option never freezes one locale's string.
 			'error_message'         => isset( $_POST['mdra_error_message'] )
 				? sanitize_text_field( wp_unslash( $_POST['mdra_error_message'] ) )
-				: __( 'REST API access restricted.', 'maxtdesign-disable-rest-api' ),
+				: '',
 			'allow_logged_in'       => ! empty( $_POST['mdra_allow_logged_in'] ),
 			'whitelisted_endpoints' => $this->sanitize_endpoint_list( $raw_whitelisted ),
 			'role_restrictions'     => $this->sanitize_role_restrictions( $raw_role_restrictions ),
@@ -193,9 +204,8 @@ final class Settings {
 	 * @since 1.0.0
 	 */
 	private function import_settings(): void {
-		if ( ! check_admin_referer( 'mdra_import_settings', 'mdra_import_nonce' ) ) {
-			return;
-		}
+		// check_admin_referer() halts on a bad/expired nonce.
+		check_admin_referer( 'mdra_import_settings', 'mdra_import_nonce' );
 
 		if ( empty( $_FILES['mdra_import_file']['tmp_name'] ) ) {
 			wp_safe_redirect( add_query_arg( 'mdra_message', 'import_error', $this->get_settings_url() ) );
@@ -260,9 +270,8 @@ final class Settings {
 	 * @since 1.0.0
 	 */
 	private function export_settings(): void {
-		if ( ! check_admin_referer( 'mdra_export_settings', 'mdra_export_nonce' ) ) {
-			return;
-		}
+		// check_admin_referer() halts on a bad/expired nonce.
+		check_admin_referer( 'mdra_export_settings', 'mdra_export_nonce' );
 
 		$settings = mdra_get_settings();
 
@@ -280,9 +289,8 @@ final class Settings {
 	 * @since 1.0.0
 	 */
 	private function reset_settings(): void {
-		if ( ! check_admin_referer( 'mdra_reset_settings', 'mdra_reset_nonce' ) ) {
-			return;
-		}
+		// check_admin_referer() halts on a bad/expired nonce.
+		check_admin_referer( 'mdra_reset_settings', 'mdra_reset_nonce' );
 
 		delete_option( 'mdra_settings' );
 
@@ -301,6 +309,10 @@ final class Settings {
 		if ( null === $screen || $screen->id !== $this->hook_suffix ) {
 			return;
 		}
+
+		// Compatibility warnings reflect current site state, not the result of
+		// a form submission, so they render on every settings-page load.
+		$this->render_compatibility_notices();
 
 		// Read-only notice lookup whose value is whitelisted against a fixed
 		// set below — no state-changing action depends on this $_GET, so a
@@ -328,9 +340,6 @@ final class Settings {
 			esc_attr( $notices[ $message ][0] ),
 			esc_html( $notices[ $message ][1] )
 		);
-
-		// Show plugin compatibility notices.
-		$this->render_compatibility_notices();
 	}
 
 	/**
@@ -431,6 +440,13 @@ final class Settings {
 	 * @return array<string, array<string>> Namespace => list of routes.
 	 */
 	public function discover_endpoints(): array {
+		// Discovery is identical within a single request (the settings page
+		// calls it for both the compatibility notices and the endpoint tree),
+		// so memoize it to avoid walking the full route table twice.
+		if ( null !== $this->discovered ) {
+			return $this->discovered;
+		}
+
 		$server = rest_get_server();
 		$routes = $server->get_routes();
 		$grouped = [];
@@ -462,6 +478,8 @@ final class Settings {
 		}
 
 		ksort( $grouped );
+
+		$this->discovered = $grouped;
 
 		return $grouped;
 	}
@@ -543,10 +561,11 @@ final class Settings {
 							id="mdra_error_message"
 							name="mdra_error_message"
 							value="<?php echo esc_attr( $settings['error_message'] ?? '' ); ?>"
+							placeholder="<?php echo esc_attr__( 'REST API access restricted.', 'maxtdesign-disable-rest-api' ); ?>"
 							class="regular-text"
 						>
 						<p class="description">
-							<?php esc_html_e( 'The message returned to blocked REST API requests.', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'The message returned to blocked REST API requests. Leave blank to use the default.', 'maxtdesign-disable-rest-api' ); ?>
 						</p>
 					</td>
 				</tr>
@@ -808,7 +827,7 @@ final class Settings {
 				continue;
 			}
 
-			$clean = sanitize_text_field( $endpoint );
+			$clean = $this->sanitize_endpoint( $endpoint );
 
 			if ( '' !== $clean ) {
 				$sanitized[] = $clean;
@@ -816,6 +835,29 @@ final class Settings {
 		}
 
 		return array_values( array_unique( $sanitized ) );
+	}
+
+	/**
+	 * Sanitizes a single REST endpoint / route-pattern string.
+	 *
+	 * REST route keys legitimately contain regex syntax such as
+	 * `(?P<id>[\d]+)`. sanitize_text_field() treats `<id>` as an HTML tag and
+	 * strips it, corrupting the stored pattern so it can never match a real
+	 * route. Instead we strip only control characters and whitespace (which
+	 * never appear in a registered route) and normalise the leading slash,
+	 * preserving the regex metacharacters intact. Values are always escaped on
+	 * output, so retaining `<`/`>` here is safe.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @param string $endpoint Raw endpoint string.
+	 * @return string Sanitized endpoint, or empty string if nothing usable remains.
+	 */
+	private function sanitize_endpoint( string $endpoint ): string {
+		// Drop control characters and all whitespace.
+		$endpoint = (string) preg_replace( '/[\x00-\x20\x7F]/', '', $endpoint );
+
+		return ltrim( $endpoint, '/' );
 	}
 
 	/**

@@ -1,10 +1,10 @@
-# Copyright (C) 2024 MaxtDesign
+# Copyright (C) 2026 MaxtDesign
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: MaxtDesign Disable REST API 1.0.0\n"
+"Project-Id-Version: MaxtDesign Disable REST API 1.0.3\n"
 "Report-Msgid-Bugs-To: https://maxtdesign.com\n"
-"POT-Creation-Date: 2024-01-01T00:00:00+00:00\n"
+"POT-Creation-Date: 2026-06-11T00:00:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Domain: maxtdesign-disable-rest-api\n"
 
 #: includes/class-plugin.php
 msgid "Settings"
 msgstr ""
 
-#: includes/class-plugin.php
+#: includes/class-rest-controller.php
+#: includes/class-settings.php
 msgid "REST API access restricted."
 msgstr ""
 
@@ -41,6 +43,7 @@ msgstr ""
 msgid "Settings reset to defaults."
 msgstr ""
 
+#. translators: %s: plugin name
 #: includes/class-settings.php
 msgid "%s requires REST API access to function properly. Consider whitelisting its endpoints."
 msgstr ""
@@ -62,7 +65,7 @@ msgid "Custom error message"
 msgstr ""
 
 #: includes/class-settings.php
-msgid "The message returned to blocked REST API requests."
+msgid "The message returned to blocked REST API requests. Leave blank to use the default."
 msgstr ""
 
 #: includes/class-settings.php
@@ -93,10 +96,12 @@ msgstr ""
 msgid "Restrict REST API access for specific user roles. By default, all logged-in roles have full access."
 msgstr ""
 
+#. translators: %s: user role name
 #: includes/class-settings.php
 msgid "Restrict %s"
 msgstr ""
 
+#. translators: %s: user role name
 #: includes/class-settings.php
 msgid "Select which endpoints the %s role can access:"
 msgstr ""
@@ -107,6 +112,10 @@ msgstr ""
 
 #: includes/class-settings.php
 msgid "Deselect All"
+msgstr ""
+
+#: includes/class-settings.php
+msgid "Save Settings"
 msgstr ""
 
 #: includes/class-settings.php
@@ -135,8 +144,4 @@ msgstr ""
 
 #: includes/class-settings.php
 msgid "This will reset all settings to their defaults. This action cannot be undone."
-msgstr ""
-
-#: includes/class-settings.php
-msgid "Save Settings"
 msgstr ""
