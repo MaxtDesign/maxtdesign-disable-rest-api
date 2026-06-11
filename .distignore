@@ -70,6 +70,7 @@ CONTRIBUTING.md
 CHANGELOG.md
 CODE_OF_CONDUCT.md
 LICENSE.md
+SECURITY.md
 # ^ readme.md is fine to keep OUT — wp.org reads readme.txt only
 
 # CI / deploy config
