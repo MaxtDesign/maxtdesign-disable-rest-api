@@ -1,4 +1,6 @@
-# MaxtDesign Disable REST API — wp.org Release Skill
+# MaxtDesign REST API Control — wp.org Release Skill
+
+> Display name is **MaxtDesign REST API Control** (renamed in 1.0.4). The slug stays `maxtdesign-disable-rest-api` (brand-led, unique, already requested) — do NOT change the slug, text domain, or `MaxtDesign\DisableRestApi` namespace.
 
 Project-specific wp.org release context for the procedure defined in `hq/.claude/agents/development/wporg-release.md`. Copy this file into a new plugin at `<plugin>/.claude/skills/wporg-release.md` and fill in the placeholders.
 
@@ -25,9 +27,9 @@ Every release requires these to match exactly:
 
 | Location | File | Line/Pattern |
 |---|---|---|
-| Plugin header | `maxtdesign-disable-rest-api.php` | line 6: `Version: 1.0.3` |
-| Readme stable tag | `readme.txt` | line 7: `Stable tag: 1.0.3` |
-| Constant (if used) | `maxtdesign-disable-rest-api.php` | line 28: `define( 'MDRA_VERSION', '1.0.3' );` |
+| Plugin header | `maxtdesign-disable-rest-api.php` | line 6: `Version: 1.0.4` |
+| Readme stable tag | `readme.txt` | line 7: `Stable tag: 1.0.4` |
+| Constant (if used) | `maxtdesign-disable-rest-api.php` | line 28: `define( 'MDRA_VERSION', '1.0.4' );` |
 | Git tag | repo | `vX.Y.Z` on main |
 | SVN tag | `/tags/X.Y.Z/` | created by procedure |
 
@@ -61,6 +63,7 @@ Baseline comes from `hq/.claude/standards/wporg-svn-setup.md`. Additional per-pl
 
 | Version | Date | Git SHA | Notes |
 |---|---|---|---|
+| 1.0.4 | 2026-06-11 | (set by release) | Renamed display name "Disable REST API" → "REST API Control" (slug unchanged). GitHub only — wp.org slug still pending. |
 | 1.0.3 | 2026-06-11 | (set by release) | Pre-submission hardening: fixed parameterized-route whitelist, most-permissive multi-role, removed Logger placeholder, multisite defaults, i18n default message. GitHub only — wp.org slug still pending. |
 | 1.0.2 | 2026-05-28 | (set by release) | Fix: root-index `/wp-json/` was fail-open. GitHub release only — wp.org SVN slug still pending approval. |
 | 1.0.1 | 2026-05-28 | 2c17786 | Audit + WP 7.0 compat + hardening. GitHub release only — wp.org SVN slug pending approval, hold SVN push until approved. |

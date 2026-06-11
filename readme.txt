@@ -1,10 +1,10 @@
-=== MaxtDesign Disable REST API ===
+=== MaxtDesign REST API Control ===
 Contributors: slaacr
 Tags: rest api, security, disable rest api, json api, api control
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Full control over your WordPress REST API. Block, restrict, or whitelist endpoin
 
 == Description ==
 
-**MaxtDesign Disable REST API** gives you complete control over who can access your WordPress REST API and which endpoints are available.
+**MaxtDesign REST API Control** gives you complete control over who can access your WordPress REST API and which endpoints are available.
 
 By default, WordPress exposes a REST API to the public, which can reveal usernames, post data, and site structure to anyone. This plugin lets you lock down the REST API for unauthenticated visitors while keeping it fully functional for logged-in users and the plugins that need it.
 
@@ -98,6 +98,9 @@ This plugin makes no external HTTP requests, sets no cookies, loads no third-par
 
 == Changelog ==
 
+= 1.0.4 =
+* Renamed the plugin to **MaxtDesign REST API Control** to better reflect what it does — whitelist and per-role control, not just an on/off switch. The in-product menu and settings page were already named "REST API Control"; this aligns the plugin's public name with them. No settings, hooks, or behaviour changed.
+
 = 1.0.3 =
 * Fix: route-level whitelisting now works for parameterized endpoints. Checking an individual route such as `wp/v2/posts/(?P<id>[\d]+)` previously stored a corrupted value (the sanitiser mangled the regex) and could never match a real request. Route patterns are now stored intact and matched the way WordPress itself matches them. Namespace-level whitelisting was unaffected.
 * Improve: multi-role users now get the most permissive result. Any unrestricted role grants full access; if every role is restricted, their whitelists are combined. Previously the first restricted role found could lock out a user who also held an unrestricted role.
@@ -129,6 +132,9 @@ This plugin makes no external HTTP requests, sets no cookies, loads no third-par
 * Clean uninstall — removes all plugin data.
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+Plugin renamed to "MaxtDesign REST API Control." Cosmetic only — your settings and behaviour are unchanged.
 
 = 1.0.3 =
 Fixes route-level whitelisting for parameterized endpoints (namespace whitelisting was already fine) and makes multi-role access most-permissive. Recommended for anyone using per-route or per-role rules.

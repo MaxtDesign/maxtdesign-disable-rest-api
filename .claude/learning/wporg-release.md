@@ -1,4 +1,4 @@
-# MaxtDesign Disable REST API — wp.org Release Learning Log
+# MaxtDesign REST API Control — wp.org Release Learning Log
 
 Append-only log of lessons from wp.org releases of this plugin. Updated by agents after each release per the Learning Protocol in `hq/.claude/agents/development/wporg-release.md`.
 

@@ -1,5 +1,5 @@
 /**
- * MaxtDesign Disable REST API — Admin Settings JS
+ * MaxtDesign REST API Control — Admin Settings JS
  *
  * Loaded ONLY on the plugin's settings page. Never globally.
  * Vanilla JS only — no frameworks, no jQuery dependency.
