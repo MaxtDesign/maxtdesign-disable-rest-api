@@ -59,6 +59,7 @@ vite.config.js
 gulpfile.js
 Gruntfile.js
 src/
+tools/
 # ^ Remove src/ if plugin ships pre-built assets from src/
 
 # wp.org marketing assets — published separately, NOT bundled into trunk
