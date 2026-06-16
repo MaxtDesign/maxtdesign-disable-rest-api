@@ -80,8 +80,8 @@ final class Settings {
 	 */
 	public function add_settings_page(): void {
 		$this->hook_suffix = add_options_page(
-			__( 'REST API Control', 'maxtdesign-disable-rest-api' ),
-			__( 'REST API Control', 'maxtdesign-disable-rest-api' ),
+			__( 'REST API Control', 'maxtdesign-rest-api-control' ),
+			__( 'REST API Control', 'maxtdesign-rest-api-control' ),
 			'manage_options',
 			'mdra-settings',
 			[ $this, 'render_settings_page' ]
@@ -325,10 +325,10 @@ final class Settings {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$message = sanitize_text_field( wp_unslash( $_GET['mdra_message'] ) );
 		$notices = [
-			'saved'        => [ 'success', __( 'Settings saved successfully.', 'maxtdesign-disable-rest-api' ) ],
-			'imported'     => [ 'success', __( 'Settings imported successfully.', 'maxtdesign-disable-rest-api' ) ],
-			'import_error' => [ 'error', __( 'Import failed. Please upload a valid JSON file.', 'maxtdesign-disable-rest-api' ) ],
-			'reset'        => [ 'success', __( 'Settings reset to defaults.', 'maxtdesign-disable-rest-api' ) ],
+			'saved'        => [ 'success', __( 'Settings saved successfully.', 'maxtdesign-rest-api-control' ) ],
+			'imported'     => [ 'success', __( 'Settings imported successfully.', 'maxtdesign-rest-api-control' ) ],
+			'import_error' => [ 'error', __( 'Import failed. Please upload a valid JSON file.', 'maxtdesign-rest-api-control' ) ],
+			'reset'        => [ 'success', __( 'Settings reset to defaults.', 'maxtdesign-rest-api-control' ) ],
 		];
 
 		if ( ! isset( $notices[ $message ] ) ) {
@@ -392,7 +392,7 @@ final class Settings {
 					'<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
 					sprintf(
 						/* translators: %s: plugin name */
-						esc_html__( '%s requires REST API access to function properly. Consider whitelisting its endpoints.', 'maxtdesign-disable-rest-api' ),
+						esc_html__( '%s requires REST API access to function properly. Consider whitelisting its endpoints.', 'maxtdesign-rest-api-control' ),
 						'<strong>' . esc_html( $plugin['name'] ) . '</strong>'
 					)
 				);
@@ -500,7 +500,7 @@ final class Settings {
 
 		?>
 		<div class="wrap mdra-settings-wrap">
-			<h1><?php esc_html_e( 'REST API Control', 'maxtdesign-disable-rest-api' ); ?></h1>
+			<h1><?php esc_html_e( 'REST API Control', 'maxtdesign-rest-api-control' ); ?></h1>
 
 			<form method="post" action="">
 				<?php wp_nonce_field( 'mdra_save_settings', 'mdra_nonce' ); ?>
@@ -510,7 +510,7 @@ final class Settings {
 				<?php $this->render_endpoint_whitelist_section( $settings, $endpoints ); ?>
 				<?php $this->render_role_controls_section( $settings, $endpoints, $roles ); ?>
 
-				<?php submit_button( __( 'Save Settings', 'maxtdesign-disable-rest-api' ) ); ?>
+				<?php submit_button( __( 'Save Settings', 'maxtdesign-rest-api-control' ) ); ?>
 			</form>
 
 			<hr>
@@ -530,12 +530,12 @@ final class Settings {
 	private function render_global_settings_section( array $settings ): void {
 		?>
 		<div class="mdra-section">
-			<h2><?php esc_html_e( 'Global Settings', 'maxtdesign-disable-rest-api' ); ?></h2>
+			<h2><?php esc_html_e( 'Global Settings', 'maxtdesign-rest-api-control' ); ?></h2>
 			<table class="form-table" role="presentation">
 				<tr>
 					<th scope="row">
 						<label for="mdra_disable_rest_api">
-							<?php esc_html_e( 'Disable REST API for unauthenticated users', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'Disable REST API for unauthenticated users', 'maxtdesign-rest-api-control' ); ?>
 						</label>
 					</th>
 					<td>
@@ -546,14 +546,14 @@ final class Settings {
 								value="1"
 								<?php checked( ! empty( $settings['disable_rest_api'] ) ); ?>
 							>
-							<?php esc_html_e( 'Block REST API requests from unauthenticated visitors.', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'Block REST API requests from unauthenticated visitors.', 'maxtdesign-rest-api-control' ); ?>
 						</label>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">
 						<label for="mdra_error_message">
-							<?php esc_html_e( 'Custom error message', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'Custom error message', 'maxtdesign-rest-api-control' ); ?>
 						</label>
 					</th>
 					<td>
@@ -561,18 +561,18 @@ final class Settings {
 							id="mdra_error_message"
 							name="mdra_error_message"
 							value="<?php echo esc_attr( $settings['error_message'] ?? '' ); ?>"
-							placeholder="<?php echo esc_attr__( 'REST API access restricted.', 'maxtdesign-disable-rest-api' ); ?>"
+							placeholder="<?php echo esc_attr__( 'REST API access restricted.', 'maxtdesign-rest-api-control' ); ?>"
 							class="regular-text"
 						>
 						<p class="description">
-							<?php esc_html_e( 'The message returned to blocked REST API requests. Leave blank to use the default.', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'The message returned to blocked REST API requests. Leave blank to use the default.', 'maxtdesign-rest-api-control' ); ?>
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">
 						<label for="mdra_allow_logged_in">
-							<?php esc_html_e( 'Allow REST API for all logged-in users', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'Allow REST API for all logged-in users', 'maxtdesign-rest-api-control' ); ?>
 						</label>
 					</th>
 					<td>
@@ -583,7 +583,7 @@ final class Settings {
 								value="1"
 								<?php checked( ! empty( $settings['allow_logged_in'] ) ); ?>
 							>
-							<?php esc_html_e( 'Allow full REST API access for any logged-in user (unless restricted by role below).', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'Allow full REST API access for any logged-in user (unless restricted by role below).', 'maxtdesign-rest-api-control' ); ?>
 						</label>
 					</td>
 				</tr>
@@ -604,13 +604,13 @@ final class Settings {
 		$whitelisted = $settings['whitelisted_endpoints'] ?? [];
 		?>
 		<div class="mdra-section">
-			<h2><?php esc_html_e( 'Endpoint Whitelist (Unauthenticated Users)', 'maxtdesign-disable-rest-api' ); ?></h2>
+			<h2><?php esc_html_e( 'Endpoint Whitelist (Unauthenticated Users)', 'maxtdesign-rest-api-control' ); ?></h2>
 			<p class="description">
-				<?php esc_html_e( 'Select endpoints that should remain accessible to unauthenticated visitors, even when the REST API is disabled.', 'maxtdesign-disable-rest-api' ); ?>
+				<?php esc_html_e( 'Select endpoints that should remain accessible to unauthenticated visitors, even when the REST API is disabled.', 'maxtdesign-rest-api-control' ); ?>
 			</p>
 
 			<?php if ( empty( $endpoints ) ) : ?>
-				<p><em><?php esc_html_e( 'No REST API endpoints discovered. Endpoints will appear after the REST API has been initialized.', 'maxtdesign-disable-rest-api' ); ?></em></p>
+				<p><em><?php esc_html_e( 'No REST API endpoints discovered. Endpoints will appear after the REST API has been initialized.', 'maxtdesign-rest-api-control' ); ?></em></p>
 			<?php else : ?>
 				<div class="mdra-endpoint-tree" id="mdra-endpoint-tree-global">
 					<?php $this->render_endpoint_tree( $endpoints, $whitelisted, 'mdra_whitelisted_endpoints' ); ?>
@@ -635,12 +635,12 @@ final class Settings {
 		<div class="mdra-section">
 			<h2>
 				<button type="button" class="mdra-toggle-section" aria-expanded="false" data-target="mdra-role-controls">
-					<?php esc_html_e( 'Per-Role Controls (Advanced)', 'maxtdesign-disable-rest-api' ); ?>
+					<?php esc_html_e( 'Per-Role Controls (Advanced)', 'maxtdesign-rest-api-control' ); ?>
 					<span class="mdra-toggle-icon" aria-hidden="true"></span>
 				</button>
 			</h2>
 			<p class="description">
-				<?php esc_html_e( 'Restrict REST API access for specific user roles. By default, all logged-in roles have full access.', 'maxtdesign-disable-rest-api' ); ?>
+				<?php esc_html_e( 'Restrict REST API access for specific user roles. By default, all logged-in roles have full access.', 'maxtdesign-rest-api-control' ); ?>
 			</p>
 
 			<div id="mdra-role-controls" class="mdra-collapsible" hidden>
@@ -663,7 +663,7 @@ final class Settings {
 								<?php
 								printf(
 									/* translators: %s: user role name */
-									esc_html__( 'Restrict %s', 'maxtdesign-disable-rest-api' ),
+									esc_html__( 'Restrict %s', 'maxtdesign-rest-api-control' ),
 									esc_html( $role_name )
 								);
 								?>
@@ -676,7 +676,7 @@ final class Settings {
 									<?php
 									printf(
 										/* translators: %s: user role name */
-										esc_html__( 'Select which endpoints the %s role can access:', 'maxtdesign-disable-rest-api' ),
+										esc_html__( 'Select which endpoints the %s role can access:', 'maxtdesign-rest-api-control' ),
 										esc_html( $role_name )
 									);
 									?>
@@ -729,11 +729,11 @@ final class Settings {
 					</label>
 					<span class="mdra-namespace-actions">
 						<button type="button" class="button-link mdra-select-all" data-namespace="<?php echo esc_attr( $namespace_id ); ?>">
-							<?php esc_html_e( 'Select All', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'Select All', 'maxtdesign-rest-api-control' ); ?>
 						</button>
 						|
 						<button type="button" class="button-link mdra-deselect-all" data-namespace="<?php echo esc_attr( $namespace_id ); ?>">
-							<?php esc_html_e( 'Deselect All', 'maxtdesign-disable-rest-api' ); ?>
+							<?php esc_html_e( 'Deselect All', 'maxtdesign-rest-api-control' ); ?>
 						</button>
 					</span>
 				</div>
@@ -765,31 +765,31 @@ final class Settings {
 	private function render_import_export_section(): void {
 		?>
 		<div class="mdra-section mdra-import-export">
-			<h2><?php esc_html_e( 'Import / Export', 'maxtdesign-disable-rest-api' ); ?></h2>
+			<h2><?php esc_html_e( 'Import / Export', 'maxtdesign-rest-api-control' ); ?></h2>
 
 			<div class="mdra-import-export-grid">
 				<div class="mdra-export-box">
-					<h3><?php esc_html_e( 'Export Settings', 'maxtdesign-disable-rest-api' ); ?></h3>
+					<h3><?php esc_html_e( 'Export Settings', 'maxtdesign-rest-api-control' ); ?></h3>
 					<p class="description">
-						<?php esc_html_e( 'Download your current settings as a JSON file.', 'maxtdesign-disable-rest-api' ); ?>
+						<?php esc_html_e( 'Download your current settings as a JSON file.', 'maxtdesign-rest-api-control' ); ?>
 					</p>
 					<form method="post" action="">
 						<?php wp_nonce_field( 'mdra_export_settings', 'mdra_export_nonce' ); ?>
 						<input type="hidden" name="mdra_action" value="export_settings">
-						<?php submit_button( __( 'Export Settings', 'maxtdesign-disable-rest-api' ), 'secondary', 'mdra_export', false ); ?>
+						<?php submit_button( __( 'Export Settings', 'maxtdesign-rest-api-control' ), 'secondary', 'mdra_export', false ); ?>
 					</form>
 				</div>
 
 				<div class="mdra-import-box">
-					<h3><?php esc_html_e( 'Import Settings', 'maxtdesign-disable-rest-api' ); ?></h3>
+					<h3><?php esc_html_e( 'Import Settings', 'maxtdesign-rest-api-control' ); ?></h3>
 					<p class="description">
-						<?php esc_html_e( 'Upload a previously exported JSON settings file.', 'maxtdesign-disable-rest-api' ); ?>
+						<?php esc_html_e( 'Upload a previously exported JSON settings file.', 'maxtdesign-rest-api-control' ); ?>
 					</p>
 					<form method="post" action="" enctype="multipart/form-data">
 						<?php wp_nonce_field( 'mdra_import_settings', 'mdra_import_nonce' ); ?>
 						<input type="hidden" name="mdra_action" value="import_settings">
 						<input type="file" name="mdra_import_file" accept=".json" required>
-						<?php submit_button( __( 'Import Settings', 'maxtdesign-disable-rest-api' ), 'secondary', 'mdra_import', false ); ?>
+						<?php submit_button( __( 'Import Settings', 'maxtdesign-rest-api-control' ), 'secondary', 'mdra_import', false ); ?>
 					</form>
 				</div>
 			</div>
@@ -797,14 +797,14 @@ final class Settings {
 			<hr>
 
 			<div class="mdra-reset-box">
-				<h3><?php esc_html_e( 'Reset to Defaults', 'maxtdesign-disable-rest-api' ); ?></h3>
+				<h3><?php esc_html_e( 'Reset to Defaults', 'maxtdesign-rest-api-control' ); ?></h3>
 				<p class="description">
-					<?php esc_html_e( 'This will reset all settings to their defaults. This action cannot be undone.', 'maxtdesign-disable-rest-api' ); ?>
+					<?php esc_html_e( 'This will reset all settings to their defaults. This action cannot be undone.', 'maxtdesign-rest-api-control' ); ?>
 				</p>
 				<form method="post" action="" id="mdra-reset-form">
 					<?php wp_nonce_field( 'mdra_reset_settings', 'mdra_reset_nonce' ); ?>
 					<input type="hidden" name="mdra_action" value="reset_settings">
-					<?php submit_button( __( 'Reset to Defaults', 'maxtdesign-disable-rest-api' ), 'delete', 'mdra_reset', false ); ?>
+					<?php submit_button( __( 'Reset to Defaults', 'maxtdesign-rest-api-control' ), 'delete', 'mdra_reset', false ); ?>
 				</form>
 			</div>
 		</div>

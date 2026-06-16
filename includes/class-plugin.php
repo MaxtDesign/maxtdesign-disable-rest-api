@@ -219,7 +219,7 @@ final class Plugin {
 		$settings_link = sprintf(
 			'<a href="%s">%s</a>',
 			esc_url( admin_url( 'options-general.php?page=mdra-settings' ) ),
-			esc_html__( 'Settings', 'maxtdesign-disable-rest-api' )
+			esc_html__( 'Settings', 'maxtdesign-rest-api-control' )
 		);
 
 		array_unshift( $links, $settings_link );

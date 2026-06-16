@@ -371,7 +371,7 @@ final class Rest_Controller {
 		// than whichever locale was active when the setting was saved.
 		$message = ! empty( $settings['error_message'] )
 			? $settings['error_message']
-			: __( 'REST API access restricted.', 'maxtdesign-disable-rest-api' );
+			: __( 'REST API access restricted.', 'maxtdesign-rest-api-control' );
 
 		/**
 		 * Filters the error response returned when a REST API request is blocked.

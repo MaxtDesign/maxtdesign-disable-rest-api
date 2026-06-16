@@ -4,7 +4,7 @@ Tags: rest api, security, disable rest api, json api, api control
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,7 +42,7 @@ This plugin follows the MaxtDesign performance-first philosophy:
 
 == Installation ==
 
-1. Upload the `maxtdesign-disable-rest-api` folder to `/wp-content/plugins/`.
+1. Upload the `maxtdesign-rest-api-control` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Go to **Settings > REST API Control** to configure.
 4. The REST API is blocked for unauthenticated users by default. Adjust the whitelist as needed.
@@ -98,6 +98,9 @@ This plugin makes no external HTTP requests, sets no cookies, loads no third-par
 
 == Changelog ==
 
+= 1.0.5 =
+* Internationalization: the text domain now matches the plugin slug (`maxtdesign-rest-api-control`) so the plugin can be translated through the WordPress.org translation system. No functional change.
+
 = 1.0.4 =
 * Renamed the plugin to **MaxtDesign REST API Control** to better reflect what it does — whitelist and per-role control, not just an on/off switch. The in-product menu and settings page were already named "REST API Control"; this aligns the plugin's public name with them. No settings, hooks, or behaviour changed.
 
@@ -132,6 +135,9 @@ This plugin makes no external HTTP requests, sets no cookies, loads no third-par
 * Clean uninstall — removes all plugin data.
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+Internationalization fix so the plugin is translatable via WordPress.org. No functional change.
 
 = 1.0.4 =
 Plugin renamed to "MaxtDesign REST API Control." Cosmetic only — your settings and behaviour are unchanged.

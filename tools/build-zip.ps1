@@ -32,17 +32,25 @@ $ErrorActionPreference = 'Stop'
 
 # --- Locate paths -----------------------------------------------------------
 $repo = Split-Path $PSScriptRoot -Parent
-$slug = Split-Path $repo -Leaf
-$mainFile = Join-Path $repo "$slug.php"
 
-if (-not (Test-Path $mainFile)) {
-    throw "Main plugin file not found: $mainFile"
-}
+# Main plugin file = the repo-root .php carrying the "Plugin Name:" header.
+# (The file name does not have to match the slug, and here it doesn't.)
+$mainFile = Get-ChildItem -Path $repo -Filter *.php -File |
+    Where-Object { Select-String -Path $_.FullName -Pattern '^\s*\*\s*Plugin Name:' -Quiet } |
+    Select-Object -First 1
+if (-not $mainFile) { throw "No main plugin file (with a 'Plugin Name:' header) found in $repo" }
+$mainName = $mainFile.Name
+
+# Slug = the Text Domain header. wp.org requires text domain == slug, so this
+# is the authoritative source for the distributed folder + zip name.
+$tdLine = Select-String -Path $mainFile.FullName -Pattern '^\s*\*\s*Text Domain:\s*(.+?)\s*$' | Select-Object -First 1
+if (-not $tdLine) { throw "Could not read 'Text Domain:' from $mainName" }
+$slug = $tdLine.Matches[0].Groups[1].Value.Trim()
 
 if (-not $Version) {
-    $headerLine = Select-String -Path $mainFile -Pattern '^\s*\*\s*Version:\s*(.+?)\s*$' | Select-Object -First 1
-    if (-not $headerLine) { throw "Could not read 'Version:' from $mainFile" }
-    $Version = $headerLine.Matches[0].Groups[1].Value.Trim()
+    $verLine = Select-String -Path $mainFile.FullName -Pattern '^\s*\*\s*Version:\s*(.+?)\s*$' | Select-Object -First 1
+    if (-not $verLine) { throw "Could not read 'Version:' from $mainName" }
+    $Version = $verLine.Matches[0].Groups[1].Value.Trim()
 }
 
 if (-not $OutDir) {
@@ -53,7 +61,7 @@ if (-not $OutDir) {
 # Globs auto-pick up new files in these dirs (e.g. a new includes/*.php class)
 # while top-level dev files and dirs are never copied.
 $include = @(
-    "$slug.php",
+    $mainName,
     'readme.txt',
     'uninstall.php',
     'includes\*.php',

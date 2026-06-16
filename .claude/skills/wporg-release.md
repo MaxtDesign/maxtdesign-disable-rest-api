@@ -1,6 +1,8 @@
 # MaxtDesign REST API Control — wp.org Release Skill
 
-> Display name is **MaxtDesign REST API Control** (renamed in 1.0.4). The slug stays `maxtdesign-disable-rest-api` (brand-led, unique, already requested) — do NOT change the slug, text domain, or `MaxtDesign\DisableRestApi` namespace.
+> **wp.org slug is `maxtdesign-rest-api-control`** — derived from the Plugin Name header at submission, NOT from the zip folder. (We learned this the hard way: the v1.0.4 review bounced because the text domain still said `maxtdesign-disable-rest-api`. Fixed in 1.0.5 — text domain + .pot now match the slug.)
+>
+> Identity is intentionally split: the **slug, text domain, distributed folder, and .pot** are all `maxtdesign-rest-api-control`. The **GitHub repo, local working folder, main plugin file (`maxtdesign-disable-rest-api.php`), and PHP namespace (`MaxtDesign\DisableRestApi`)** still use the old form — these are internal and a deferred infra-rename (renaming the local folder would orphan the Claude memory dir). Do not assume they match the slug. The `MDRA_` constant prefix and `mdra_` hook/option prefix are short-code based and correct as-is.
 
 Project-specific wp.org release context for the procedure defined in `hq/.claude/agents/development/wporg-release.md`. Copy this file into a new plugin at `<plugin>/.claude/skills/wporg-release.md` and fill in the placeholders.
 
@@ -8,13 +10,13 @@ Project-specific wp.org release context for the procedure defined in `hq/.claude
 
 | Field | Value |
 |---|---|
-| `wporg_slug` | `maxtdesign-disable-rest-api` |
-| wp.org page | https://wordpress.org/plugins/maxtdesign-disable-rest-api/ |
-| SVN repo | https://plugins.svn.wordpress.org/maxtdesign-disable-rest-api/ |
-| Git repo | https://github.com/MaxtDesign/maxtdesign-disable-rest-api |
-| `git_dir` | `~/maxtventures/plugins/maxtdesign-disable-rest-api/` |
-| Main plugin file | `maxtdesign-disable-rest-api.php` |
-| Text domain | `maxtdesign-disable-rest-api` |
+| `wporg_slug` | `maxtdesign-rest-api-control` |
+| wp.org page | https://wordpress.org/plugins/maxtdesign-rest-api-control/ |
+| SVN repo | https://plugins.svn.wordpress.org/maxtdesign-rest-api-control/ |
+| Git repo | https://github.com/MaxtDesign/maxtdesign-disable-rest-api (repo NOT renamed — deferred) |
+| Local working folder | `C:\maxt\projects\plugin\maxtdesign-disable-rest-api` (NOT renamed — deferred) |
+| Main plugin file | `maxtdesign-disable-rest-api.php` (inside the `maxtdesign-rest-api-control/` distributed folder) |
+| Text domain | `maxtdesign-rest-api-control` |
 
 **Note on `git_dir`:** Most plugins live at `~/maxtventures/plugins/<slug>/`. If this plugin lives elsewhere (e.g. inside another project's tree), set the path above and pass `--git-dir` to the release script. Example for mantlewp-connector: `git_dir = ~/maxtventures/web/mantlewp/mantlewp-connector/`.
 
@@ -27,9 +29,9 @@ Every release requires these to match exactly:
 
 | Location | File | Line/Pattern |
 |---|---|---|
-| Plugin header | `maxtdesign-disable-rest-api.php` | line 6: `Version: 1.0.4` |
-| Readme stable tag | `readme.txt` | line 7: `Stable tag: 1.0.4` |
-| Constant (if used) | `maxtdesign-disable-rest-api.php` | line 28: `define( 'MDRA_VERSION', '1.0.4' );` |
+| Plugin header | `maxtdesign-disable-rest-api.php` | line 6: `Version: 1.0.5` |
+| Readme stable tag | `readme.txt` | line 7: `Stable tag: 1.0.5` |
+| Constant (if used) | `maxtdesign-disable-rest-api.php` | line 28: `define( 'MDRA_VERSION', '1.0.5' );` |
 | Git tag | repo | `vX.Y.Z` on main |
 | SVN tag | `/tags/X.Y.Z/` | created by procedure |
 
@@ -63,7 +65,8 @@ Baseline comes from `hq/.claude/standards/wporg-svn-setup.md`. Additional per-pl
 
 | Version | Date | Git SHA | Notes |
 |---|---|---|---|
-| 1.0.4 | 2026-06-11 | (set by release) | Renamed display name "Disable REST API" → "REST API Control" (slug unchanged). GitHub only — wp.org slug still pending. |
+| 1.0.5 | 2026-06-11 | (set by release) | Text domain changed to `maxtdesign-rest-api-control` to match the wp.org-assigned slug (fixes the v1.0.4 review rejection). Resubmitted. |
+| 1.0.4 | 2026-06-11 | (set by release) | Renamed display name "Disable REST API" → "REST API Control". Submitted to wp.org; review bounced: text domain didn't match the auto-derived slug. |
 | 1.0.3 | 2026-06-11 | (set by release) | Pre-submission hardening: fixed parameterized-route whitelist, most-permissive multi-role, removed Logger placeholder, multisite defaults, i18n default message. GitHub only — wp.org slug still pending. |
 | 1.0.2 | 2026-05-28 | (set by release) | Fix: root-index `/wp-json/` was fail-open. GitHub release only — wp.org SVN slug still pending approval. |
 | 1.0.1 | 2026-05-28 | 2c17786 | Audit + WP 7.0 compat + hardening. GitHub release only — wp.org SVN slug pending approval, hold SVN push until approved. |
