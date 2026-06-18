@@ -2,7 +2,7 @@
 
 > **wp.org slug is `maxtdesign-rest-api-control`** — derived from the Plugin Name header at submission, NOT from the zip folder. (We learned this the hard way: the v1.0.4 review bounced because the text domain still said `maxtdesign-disable-rest-api`. Fixed in 1.0.5 — text domain + .pot now match the slug.)
 >
-> Identity is intentionally split: the **slug, text domain, distributed folder, and .pot** are all `maxtdesign-rest-api-control`. The **GitHub repo, local working folder, main plugin file (`maxtdesign-disable-rest-api.php`), and PHP namespace (`MaxtDesign\DisableRestApi`)** still use the old form — these are internal and a deferred infra-rename (renaming the local folder would orphan the Claude memory dir). Do not assume they match the slug. The `MDRA_` constant prefix and `mdra_` hook/option prefix are short-code based and correct as-is.
+> Identity is intentionally split: the **slug, text domain, distributed folder, .pot, and GitHub repo** are all `maxtdesign-rest-api-control` (GitHub renamed 2026-06-18). Still on the old form: the **local working folder (`C:\maxt\projects\plugin\maxtdesign-disable-rest-api`), main plugin file (`maxtdesign-disable-rest-api.php`), and PHP namespace (`MaxtDesign\DisableRestApi`)** — internal, deferred (renaming the local folder would orphan the Claude memory dir; main-file != slug is valid + common). Do not assume these match the slug. The `MDRA_` constant prefix and `mdra_` hook/option prefix are short-code based and locked (the `mdra_settings` option is live in users' DBs) — do NOT change them.
 
 Project-specific wp.org release context for the procedure defined in `hq/.claude/agents/development/wporg-release.md`. Copy this file into a new plugin at `<plugin>/.claude/skills/wporg-release.md` and fill in the placeholders.
 
@@ -13,8 +13,8 @@ Project-specific wp.org release context for the procedure defined in `hq/.claude
 | `wporg_slug` | `maxtdesign-rest-api-control` |
 | wp.org page | https://wordpress.org/plugins/maxtdesign-rest-api-control/ |
 | SVN repo | https://plugins.svn.wordpress.org/maxtdesign-rest-api-control/ |
-| Git repo | https://github.com/MaxtDesign/maxtdesign-disable-rest-api (repo NOT renamed — deferred) |
-| Local working folder | `C:\maxt\projects\plugin\maxtdesign-disable-rest-api` (NOT renamed — deferred) |
+| Git repo | https://github.com/MaxtDesign/maxtdesign-rest-api-control (renamed 2026-06-18; old URL auto-redirects) |
+| Local working folder | `C:\maxt\projects\plugin\maxtdesign-disable-rest-api` (NOT renamed — would orphan the Claude memory dir) |
 | Main plugin file | `maxtdesign-disable-rest-api.php` (inside the `maxtdesign-rest-api-control/` distributed folder) |
 | Text domain | `maxtdesign-rest-api-control` |
 
