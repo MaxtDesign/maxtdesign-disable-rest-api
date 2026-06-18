@@ -65,7 +65,7 @@ Baseline comes from `hq/.claude/standards/wporg-svn-setup.md`. Additional per-pl
 
 | Version | Date | Git SHA | Notes |
 |---|---|---|---|
-| 1.0.5 | 2026-06-11 | (set by release) | Text domain changed to `maxtdesign-rest-api-control` to match the wp.org-assigned slug (fixes the v1.0.4 review rejection). Resubmitted. |
+| 1.0.5 | 2026-06-18 | 8906082 / SVN r3577509 | **PUBLISHED.** Text domain changed to `maxtdesign-rest-api-control` to match the assigned slug (fixed v1.0.4 review rejection). Live at wordpress.org/plugins/maxtdesign-rest-api-control. |
 | 1.0.4 | 2026-06-11 | (set by release) | Renamed display name "Disable REST API" → "REST API Control". Submitted to wp.org; review bounced: text domain didn't match the auto-derived slug. |
 | 1.0.3 | 2026-06-11 | (set by release) | Pre-submission hardening: fixed parameterized-route whitelist, most-permissive multi-role, removed Logger placeholder, multisite defaults, i18n default message. GitHub only — wp.org slug still pending. |
 | 1.0.2 | 2026-05-28 | (set by release) | Fix: root-index `/wp-json/` was fail-open. GitHub release only — wp.org SVN slug still pending approval. |
